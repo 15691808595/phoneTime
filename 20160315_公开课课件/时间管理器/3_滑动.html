@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<title>无标题文档</title>
+<style>
+#box {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	overflow: hidden;
+}
+#div {
+	width: 1000px;
+}
+</style>
+<script src="js/touchScroll.js"></script>
+<script>
+window.onload = function(){
+	var Scroll = new MScroll("box","y",true,false,true);
+	Scroll.onscrollstart=function(){
+		console.log("开始移动");
+	};
+	Scroll.onscroll=function(){
+		console.log(this.iScroll);
+	};
+	Scroll.onscrollend=function(){
+		console.log("结束移动");
+		clearInterval(this.timer);
+	};
+};
+</script>
+</head>
+<body>
+<div id="box">
+	<div id="div">
+    	页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+        页面内容<br />
+    </div>
+</div>
+</body>
+</html>

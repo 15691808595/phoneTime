@@ -1,0 +1,481 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>妙味课堂-时间管理器</title>
+<meta name="viewport" content="width=device-width,user-scalable=no" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="x5-orientation" content="portrait">
+<meta name="x5-fullscreen" content="true">
+<meta name="screen-orientation" content="portrait">
+<meta name="full-screen" content="yes">
+<script>
+setSize();
+window.addEventListener("resize",setSize,false);
+window.addEventListener("orientationchange",setSize,false);
+function setSize()
+{
+	var html=document.getElementsByTagName("html")[0];
+	var width=html.getBoundingClientRect().width;
+	html.style.fontSize=width/16+"px";
+}
+</script>
+<script src="js/touchScroll.js"></script>
+<script>
+window.onload=function(){
+	setLayout();
+	var rounds=document.getElementsByClassName("roundWrap");
+	var arrScroll=[];
+	var scale=2;
+	var arrNow=[];
+	var sTime=document.getElementById("time").children[0];
+	var mask=document.getElementById("mask");
+	var setBtn=document.getElementById("setBtn");
+	var time=0;
+	var timer=0;
+	for(var i=0; i<rounds.length; i++){
+		arrScroll[i]=new MScroll(rounds[i],"y",false,true,true);
+		setScroll(i);
+		arrNow[i]=0;
+	}
+	setBtn.addEventListener(
+		"touchend",
+		function(){
+			mask.style.display="block";
+			time=parseInt(""+arrNow[0]+arrNow[1])*60+parseInt(""+arrNow[2]+arrNow[3]);
+			autoTime();
+		},
+		false
+	);
+	function autoTime(){
+		clearInterval(timer);
+		for(var i=0;i<arrNow.length;i++){
+			var targetScroll=-arrNow[i]*36*scale;
+			arrScroll[i].iScroll=targetScroll;
+			arrScroll[i].setCss();
+		}
+		timer=setInterval(
+			function(){
+				time--;
+				if(time<0){
+					console.log("计时结束");
+					clearInterval(timer);
+				} else {
+					var sTime= toDB(parseInt(time/60))+toDB(time%60);
+					for(var i=0; i<sTime.length;i++){
+						autoScroll(i,sTime[i])
+					}
+				}
+			},
+			3000
+		);
+	}
+	function autoScroll(i,target){
+		var targetScroll=-target*36*scale;
+		var dis= targetScroll - arrScroll[i].iScroll;
+		if(Math.abs(dis/scale) > 36)
+		{
+			dis = (360- Math.abs(dis/scale)) * scale;
+			arrScroll[i].tweenMove(dis,"easeOut",
+				function()
+				{
+					this.iScroll=targetScroll;
+					this.setCss();
+				}
+			);	
+		}
+		else
+		{
+			arrScroll[i].tweenMove(dis,"easeOut");		
+		}
+		/*
+			-180
+			324 -36
+			-36
+		*/
+		
+	}
+	function setScroll(nub) {
+		var last=0;
+		var lastTime=0;
+		var lastDis=0;
+		var lastTimeDis=0;
+		arrScroll[nub].onscrollstart=function(){ 
+			var last=this.iScroll;
+			var lastTime=new Date().getTime();
+			lastTimeDis= 0;
+			lastDis=0;
+		};
+		arrScroll[nub].onscroll=function(){ 
+			var nowTime=new Date().getTime();
+			var deg=-this.iScroll/scale;
+			this.oScroll.style.transform="rotateX("+deg+"deg)";
+			lastTimeDis = nowTime - lastTime;
+			lastTime = nowTime;
+			lastDis = this.iScroll - last;
+			last = this.iScroll;
+			var now = Math.round(deg /36)%10;
+			now= now<0 ? now+10 : now;
+			arrNow[nub]=now;
+			toTime();
+		};
+		arrScroll[nub].onscrollend=function(){ 
+			clearInterval(this.timer);
+			var speed=lastDis/lastTimeDis;
+			speed= isNaN(speed)? 0 : speed;
+			var dis=speed*200;
+			var now = -Math.round((dis+this.iScroll) / scale /36);
+			if(nub%2 == 0){
+				if(now<0){
+					now=0;
+				}
+				if(now>5){
+					now=5;
+				}
+			}
+			dis =  -now*36*scale - this.iScroll;
+			this.tweenMove(dis,"easeOut");
+		};
+	}
+	function toTime(){
+		sTime.innerHTML=""+arrNow[0]+arrNow[1]+":"+arrNow[2]+arrNow[3];
+	}
+};
+function toDB(nub){
+	return nub<10? "0"+nub:""+nub;
+}
+function setLayout(){
+	var rounds=document.getElementsByClassName("roundWrap");
+	for(var i=0; i<rounds.length; i++){
+		var str="";
+		for(var j=0; j<10; j++){
+			if(i%2 == 0&& j<4){
+				str =  "<div><span></span>"+str+"</div>";
+			} else {
+				str =  "<div><span>"+(9-j)+"</span>"+str+"</div>";
+			}
+		}
+		str="<div class='round'>"+str+"</div><div class='bg'></div>";
+		rounds[i].innerHTML=str;
+	}
+}
+</script>
+<style>
+* {
+	-webkit-text-size-adjust: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+body, h1, p {
+	margin: 0;
+}
+a {
+	text-decoration: none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+html {
+	height: 100%;
+}
+body {
+	height: 100%;
+	overflow: auto;
+}
+#header {
+	height: 1.88rem;
+	background: url(img/header.png) no-repeat center center;
+	background-size: cover;
+	position: relative;
+	z-index: 3;
+	overflow: hidden;
+}
+#logo {
+	width: 4.5rem;
+	height: 1.1rem;
+	background: url(img/logo.png) no-repeat;
+	background-size: 100%100%;
+	margin: .39rem auto 0;
+}
+.wrap {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 1.88rem;
+	bottom: 0;
+	min-height: 22rem;
+	overflow: auto;
+	z-index: 1;
+	background: #fbfcff;
+}
+.min {
+	height: 22rem;
+	position:absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	margin-top: -11rem;
+	overflow: hidden;
+}
+.startTime {
+	width: 13.9rem;
+	display: block;
+	margin: auto;
+}
+.btn {
+	width: 7.7rem;
+	height: 2.1rem;
+	font: 1rem / 2.1rem "微软雅黑";
+	color: #fff;
+	background: #e6778d;
+	position: absolute;
+	bottom: 1.4rem;
+	left: 4.15rem;
+	text-align: center;
+}
+.btn:active {
+	opacity: .8;
+}
+#time {
+	height: 6rem;
+	text-align: center;
+	position: relative;
+}
+#time time {
+	display: block;
+	font: 2rem / 5.5rem "微软雅黑";
+	color: #191b21;
+}
+#time p {
+	position: absolute;
+	width: 100%;
+	font: .5rem / 1 "微软雅黑";
+	color: #738797;
+	top: 4rem;
+	opacity: 0;
+	transition: .5s;
+}
+#timeWarp {
+	border-top: 1px solid #e0e7ec;
+}
+.timeHead {
+	height: 1.5rem;
+	font: .6rem / 1.5rem "微软雅黑";
+	background: #fff;	
+	color: #828590;
+	text-align: center;
+}
+.timeHead span {
+	width: 50%;
+	text-align: center;
+	box-sizing: border-box;
+	float: left;
+}
+.timeHead span:nth-of-type(1) {
+	border-right: 1px solid #e0e7ec;
+}
+#round {
+	background: #e7ecf1;
+	height: 10rem;
+	overflow: hidden;
+	border-top: 2px solid #dee5eb;
+	border-bottom: 2px solid #dee5eb;
+	position: relative;
+}
+#round:after {
+	content: "";
+	clear: both;
+	display: block;
+}
+.roundWrap {
+	width: 4rem;
+	float: left;
+	box-sizing: border-box;	
+	position: relative;
+	height: 10rem;
+	-webkit-perspective: 1000px;
+	perspective: 1000px;
+}
+.roundWrap .bg {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: url(img/active.png) no-repeat;
+	background-size: 100% 100%;
+	z-index: 1;
+	opacity: 0;
+	transition: .5s;
+}
+.roundActive .bg{ 
+	opacity: 1;
+}
+.round {
+	width: 2.8rem;
+	height: 2.8rem;
+	position: absolute;
+	top: 3.6rem;
+	left: .6rem;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	-webkit-transform-origin: center center -4.309rem;
+	transform-origin: center center -4.309rem;
+	z-index: 2;
+}
+.round div {
+	position: absolute;
+	left: 0;
+	top: 2.8rem;
+	width: 2.8rem;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	-webkit-transform-origin: top;
+	transform-origin: top;
+	-webkit-transform: rotateX(-36deg);
+	transform: rotateX(-36deg);
+}
+.round>div{
+	top: 0;
+	-webkit-transform: rotateX(0deg);
+	transform: rotateX(0deg);
+}
+.round span {
+	position: absolute;
+	left: .1rem;
+	top: .1rem;
+	width: 2.6rem;
+	height: 2.6rem;
+	background: #fff;
+	text-align: center;
+	font: 1.2rem / 2.6rem "微软雅黑";
+	color: #606165;
+	border-radius: 10px;
+	box-shadow: 0 0 3px #dde5ed;
+}
+#animate .min {
+	height: auto;
+	bottom: 0;
+	top: 0;
+	margin: 0;
+}
+#animate .btn {
+	top: 19rem;
+}
+#btnGroup {
+	position: absolute;
+	width: 16rem;
+	left: 0;
+	top: 18rem;
+	padding:1rem;
+	opacity: 0;
+	margin-top: 4rem;
+	background: #fbfcff;
+	transition: .3s;
+	bottom: 0;
+	box-sizing: border-box;
+}
+.btnGroupShow {
+	margin-top: 0 !important;
+	opacity: 1  !important;
+}
+#btnGroup .btn {
+	position: static;
+	float: left;
+	width: 6.4rem;
+	height: 2.1rem;
+	margin: 0 .3rem;
+	box-sizing: border-box;
+}
+#btnGroup .btn:nth-of-type(1) {
+	border: 1px solid #a7b4bd;
+	background: #fff;
+	color: #a7b4bd;
+}
+#btnGroup .btn:nth-of-type(1):active {
+	border-color: #e15671;
+	color: #e15671;
+}
+#start {
+	z-index: 2;
+	-webkit-transition: .5s;
+	transition: .5s;
+}
+.startHide {
+	-webkit-transform: translateY(-100%);
+	transform: translateY(-100%);
+}
+#animate {
+	z-index: 1;
+}
+#timeEnd {
+	position: absolute;
+	width: 16rem;
+	background: #fff;
+	z-index: 2;
+	top: 6rem;
+	bottom: 0;
+	box-sizing: border-box;
+	border-top: 1px solid #dee5eb;
+	transition: .5s;
+	-webkit-transform: translateY(100%);
+	transform: translateY(100%);
+}
+.timeEndShow {
+	-webkit-transform: translateY(0) !important;
+	transform: translateY(0) !important;
+}
+#timeEnd .btn {
+	position: static;
+	display: block;
+	margin: 3.375rem auto 0;
+}
+#mask {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0);
+	display: none;
+}
+</style>
+</head>
+<body>
+<header id="header">
+	<h1 id="logo"></h1>
+</header>
+<article class="wrap" id="start" style="display: none;">
+	<section class="min">
+    	<img src="img/time.png" class="startTime" />
+        <a href="javascript:;" id="startBtn" class="btn" >设置时间</a>
+    </section>
+</article>
+<article class="wrap" id="animate">
+	<section class="min">
+    	<section id="time">
+        		<time>00:00</time>
+                <p>正在计时</p>
+        </section>
+        <article id="timeWarp">
+        	<header class="timeHead">
+            	<span>Minute</span>
+                <span>Second</span>
+            </header>
+            <section id="round">
+                <section class="roundWrap"></section>
+                <section class="roundWrap"></section>
+                <section class="roundWrap"></section>
+                <section class="roundWrap"></section>
+                <div id="mask"></div>
+            </section>
+        </article>
+         <a href="javascript:;" id="setBtn" class="btn" >开始计时</a>		
+         <div id="btnGroup">
+         	<a href="javascript:;" class="btn" id="reset">重置</a>
+            <a href="javascript:;" class="btn" id="pause">暂停</a>
+         </div>
+         <div id="timeEnd">
+         		<a href="javascript:;" class="btn" id="reset2">设置时间</a>
+         </div>
+    </section>
+</article>
+</body>
+</html>

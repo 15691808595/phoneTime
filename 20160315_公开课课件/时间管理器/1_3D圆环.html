@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<style>
+.box {
+	width: 100px;
+	height: 100px;
+	border: 1px solid #000;
+	-webkit-perspective: 800px;
+	perspective: 800px;
+	margin: 200px auto;
+}
+.div {
+	width: 100px;
+	height: 100px;
+	position: relative;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	transition: 5s;
+	-webkit-transform-origin: center center -153.88417685876263px;
+	transform-origin: center center -153.88417685876263px;
+}
+.box:hover .div {
+	transform: rotateX(-36deg);
+}
+.div div {
+	position: absolute;
+	left: 0;
+	top: 100px;
+	width: 100%;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	-webkit-transform-origin: top;
+	transform-origin: top;
+	-webkit-transform: rotateX(-36deg);
+	transform: rotateX(-36deg);
+}
+.div>div {
+	top: 0;
+	-webkit-transform: rotateX(0deg);
+	transform: rotateX(0deg);
+}
+.div span {
+	width: 98px;
+	height: 98px;
+	background: #ccc;
+	border: 1px solid #000;
+	font: 50px / 98px "宋体";
+	text-align: center;
+	display: block;
+}
+/*
+	正n边形外角和 = 360
+	正n边形外角 = 360 / n;
+	正切函数接受的是弧度 
+	角度转弧度： deg*Math.PI/180
+*/
+</style>
+<script>
+console.log(Math.tan(72*Math.PI/180)*50);
+window.onload=function(){
+	setLayout();
+};
+function setLayout(){
+	var div = document.getElementsByClassName("div")[0];
+	var str = "";
+	for(var i=0; i<10; i++){
+		str =  "<div><span>"+(9-i)+"</span>"+str+"</div>";
+	}
+	div.innerHTML=str;
+}
+</script>
+</head>
+<body>
+<div class="box">
+	<div class="div">
+    </div>
+</div>
+</body>
+</html>
